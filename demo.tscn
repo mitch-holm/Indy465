@@ -1,0 +1,50 @@
+[gd_scene load_steps=7 format=3 uid="uid://bxcbl324y5kpc"]
+
+[ext_resource type="ArrayMesh" uid="uid://da7150hojv1fj" path="res://democar.obj" id="1_mwqm2"]
+[ext_resource type="Script" path="res://playercharacter.gd" id="1_rqwj1"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e6ni3"]
+size = Vector3(2.01763, 1.38517, 3.8871)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_lafke"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aobow"]
+albedo_color = Color(0.65098, 0.454902, 0.368627, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ala1l"]
+size = Vector3(10.537, 0.339582, 63.289)
+
+[node name="root" type="Node3D"]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04414, -0.256641)
+script = ExtResource("1_rqwj1")
+
+[node name="pivot" type="Node3D" parent="CharacterBody3D"]
+transform = Transform3D(-1, 0, 6.97692e-05, 0, 1, 0, -6.97692e-05, 0, -1, -0.0187323, 0, -6.55651e-07)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+transform = Transform3D(-1, 0, 6.97692e-05, 0, 1, 0, -6.97692e-05, 0, -1, -0.0187323, 0.634694, -6.55651e-07)
+mesh = ExtResource("1_mwqm2")
+skeleton = NodePath("../pivot")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(-1, 0, 6.97692e-05, 0, 1, 0, -6.97692e-05, 0, -1, 0.00936613, 0.696306, 1.3113e-06)
+shape = SubResource("BoxShape3D_e6ni3")
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
+transform = Transform3D(0.999228, 0.013375, -0.0369484, 8.22026e-08, 0.940288, 0.34038, 0.0392947, -0.340117, 0.939562, -2.69104, 2.778, 12.9082)
+
+[node name="ground" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ground"]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = SubResource("PlaneMesh_lafke")
+surface_material_override/0 = SubResource("StandardMaterial3D_aobow")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ground"]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, -0.0182972, -17.0823, -0.00645638)
+shape = SubResource("BoxShape3D_ala1l")
+
+[node name="sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.867062, 0.352059, -0.352502, -5.94121e-17, 0.707551, 0.706662, 0.4982, -0.61272, 0.613491, -6.18062, 32.8834, 46.5372)
