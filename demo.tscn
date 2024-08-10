@@ -1,5 +1,7 @@
 [gd_scene load_steps=17 format=3 uid="uid://bxcbl324y5kpc"]
 
+
+[ext_resource type="Script" path="res://demo.gd" id="1_b2eah"]
 [ext_resource type="ArrayMesh" uid="uid://da7150hojv1fj" path="res://democar.obj" id="1_mwqm2"]
 [ext_resource type="Script" path="res://playercharacter.gd" id="1_rqwj1"]
 [ext_resource type="Shader" path="res://screen/bloom_prepass.gdshader" id="1_tk0q1"]
@@ -29,6 +31,7 @@ shader_parameter/prebloom = SubResource("ViewportTexture_i8xfh")
 [sub_resource type="ViewportTexture" id="ViewportTexture_aq0gr"]
 viewport_path = NodePath("Scene3DPass")
 
+
 [sub_resource type="ViewportTexture" id="ViewportTexture_memfo"]
 viewport_path = NodePath("ScreenRenderTargetNode/BloomPrepass")
 
@@ -46,10 +49,13 @@ size = Vector3(2.01763, 1.38517, 3.8871)
 
 [node name="root" type="Node3D"]
 
+
 [node name="ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.53892, 0.0595765, -0.026866)
+collision_layer = 7
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ground"]
-transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+transform = Transform3D(13.7494, 0, 0, 0, 100, 0, 0, 0, 2010.19, 0, 0, 0)
 mesh = SubResource("PlaneMesh_lafke")
 surface_material_override/0 = SubResource("StandardMaterial3D_aobow")
 
