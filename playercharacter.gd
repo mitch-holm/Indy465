@@ -12,7 +12,7 @@ const SPEED_REDUCTION = 3.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-
+@onready var carModel = get_node("carModel")
 
 func _physics_process(delta):
 	# Add the gravity.
@@ -38,15 +38,19 @@ func _physics_process(delta):
 		
 	if turn != 0:
 		turn = fixedInterpToZero(turn, TURN_REDUCTION, delta)
+		
 
 
 	if speed != 0:
 		if abs(turn) >= (MAX_TURN_SPEED * (1-(abs(speed)/(MAX_SPEED + 2.0)))): 
 			turn = MAX_TURN_SPEED * (1 if turn > 0 else -1) * (1.0-(abs(speed)/(MAX_SPEED + 2.0)))
-		global_transform.origin -= transform.basis.z.normalized() * speed * delta
+		#global_transform.origin -= transform.basis.z.normalized() * speed * delta
+		set_velocity(Vector3(global_transform.basis.z.x * -speed, velocity.y, global_transform.basis.z.z * -speed))
+		#velocity.z = global_transform.basis.z.z * -speed
 		speed = fixedInterpToZero(speed, SPEED_REDUCTION, delta)
 		rotation += Vector3(0,1,0) * delta * turn * (speed/MAX_SPEED)
-
+	
+	carModel.rotation_degrees.y = turn * 6 + 180
 	move_and_slide()
 
 func fixedInterpToZero(val, rate, delta):
