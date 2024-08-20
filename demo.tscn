@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://bxcbl324y5kpc"]
+[gd_scene load_steps=24 format=3 uid="uid://bxcbl324y5kpc"]
 
 [ext_resource type="Script" path="res://demo.gd" id="1_b2eah"]
 [ext_resource type="ArrayMesh" uid="uid://da7150hojv1fj" path="res://democar.obj" id="1_mwqm2"]
@@ -8,6 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://cex6dmukinqgu" path="res://screen/shadowmask_mask3.png" id="3_nbdws"]
 [ext_resource type="Script" path="res://screen/CrtScript.gd" id="4_ygw0n"]
 [ext_resource type="Script" path="res://envCar.gd" id="8_1avu8"]
+[ext_resource type="Script" path="res://camera/camera.gd" id="8_447mq"]
+[ext_resource type="Script" path="res://track/TrackMesh.gd" id="8_a4ceo"]
+[ext_resource type="Texture2D" uid="uid://h6jy0ua3x62d" path="res://track/track_softened.png" id="10_whcj6"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_np0jf"]
 viewport_path = NodePath("ScreenRenderTargetNode/CrtFilterPass")
@@ -86,7 +89,7 @@ offset_bottom = 40.0
 script = ExtResource("4_ygw0n")
 
 [node name="Scene3DPass" type="SubViewport" parent="."]
-size = Vector2i(1152, 648)
+size = Vector2i(1024, 576)
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Scene3DPass"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04414, -0.256641)
@@ -106,9 +109,11 @@ shape = SubResource("BoxShape3D_e6ni3")
 
 [node name="Camera3D" type="Camera3D" parent="Scene3DPass/CharacterBody3D"]
 transform = Transform3D(1, -4.67507e-16, 3.2796e-16, 3.2796e-16, 0.940288, 0.34038, -4.67507e-16, -0.34038, 0.940288, 2.08165e-12, 2.778, 5.658)
+script = ExtResource("8_447mq")
 
 [node name="ground" type="StaticBody3D" parent="Scene3DPass"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.53892, 0.0595765, -0.026866)
+visible = false
 collision_layer = 7
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Scene3DPass/ground"]
@@ -122,6 +127,16 @@ shape = SubResource("BoxShape3D_ala1l")
 
 [node name="sun" type="DirectionalLight3D" parent="Scene3DPass"]
 transform = Transform3D(0.867062, 0.352059, -0.352502, -5.94121e-17, 0.707551, 0.706662, 0.4982, -0.61272, 0.613491, -6.18062, 32.8834, 46.5372)
+
+[node name="TrackMesh" type="MeshInstance3D" parent="Scene3DPass"]
+script = ExtResource("8_a4ceo")
+metadata/quads_per_row = 100
+
+[node name="TrackMap" type="TextureRect" parent="Scene3DPass/TrackMesh"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("10_whcj6")
 
 [node name="obstacle" type="Node3D" parent="."]
 transform = Transform3D(-1, 0, 0.000890167, 0, 1, 0, -0.000890167, 0, -1, -5.81461, 0.746459, 0)
