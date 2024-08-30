@@ -1,0 +1,158 @@
+[gd_scene load_steps=24 format=3 uid="uid://bxcbl324y5kpc"]
+
+[ext_resource type="Script" path="res://demo.gd" id="1_b2eah"]
+[ext_resource type="ArrayMesh" uid="uid://da7150hojv1fj" path="res://democar.obj" id="1_mwqm2"]
+[ext_resource type="Script" path="res://playercharacter.gd" id="1_rqwj1"]
+[ext_resource type="Shader" path="res://screen/bloom_prepass.gdshader" id="1_tk0q1"]
+[ext_resource type="Shader" path="res://screen/crt.gdshader" id="2_nsdy4"]
+[ext_resource type="Texture2D" uid="uid://cex6dmukinqgu" path="res://screen/shadowmask_mask3.png" id="3_nbdws"]
+[ext_resource type="Script" path="res://screen/CrtScript.gd" id="4_ygw0n"]
+[ext_resource type="Script" path="res://envCar.gd" id="8_1avu8"]
+[ext_resource type="Script" path="res://camera/camera.gd" id="8_447mq"]
+[ext_resource type="Script" path="res://track/TrackMesh.gd" id="8_a4ceo"]
+[ext_resource type="Texture2D" uid="uid://d3vmcje1y7ts4" path="res://track/test_track.png" id="9_7g5dm"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_np0jf"]
+viewport_path = NodePath("ScreenRenderTargetNode/CrtFilterPass")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_i8xfh"]
+viewport_path = NodePath("Scene3DPass")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i2a56"]
+resource_local_to_scene = true
+shader = ExtResource("1_tk0q1")
+shader_parameter/prebloom = SubResource("ViewportTexture_i8xfh")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_aq0gr"]
+viewport_path = NodePath("Scene3DPass")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_memfo"]
+viewport_path = NodePath("ScreenRenderTargetNode/BloomPrepass")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_16sgu"]
+resource_local_to_scene = true
+shader = ExtResource("2_nsdy4")
+shader_parameter/brightness = Vector3(-0.1, -0.1, 0)
+shader_parameter/bloom_size = Vector2(500, 500)
+shader_parameter/base_texture = SubResource("ViewportTexture_aq0gr")
+shader_parameter/bloom_texture = SubResource("ViewportTexture_memfo")
+shader_parameter/shadow_mask = ExtResource("3_nbdws")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e6ni3"]
+size = Vector3(2.01763, 1.38517, 3.8871)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_lafke"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aobow"]
+albedo_color = Color(0.65098, 0.454902, 0.368627, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ala1l"]
+size = Vector3(10.537, 0.339582, 63.289)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_xrkw2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ajyig"]
+size = Vector3(2, 1.5, 3.9)
+
+[node name="root" type="Node3D"]
+script = ExtResource("1_b2eah")
+
+[node name="ScreenRenderTargetNode" type="Node2D" parent="."]
+
+[node name="RenderTarget" type="CanvasLayer" parent="ScreenRenderTargetNode"]
+
+[node name="Sprite2D" type="Sprite2D" parent="ScreenRenderTargetNode/RenderTarget"]
+
+[node name="TextureRect" type="TextureRect" parent="ScreenRenderTargetNode/RenderTarget/Sprite2D"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("ViewportTexture_np0jf")
+stretch_mode = 1
+
+[node name="BloomPrepass" type="SubViewport" parent="ScreenRenderTargetNode"]
+size = Vector2i(1152, 648)
+
+[node name="ColorRect" type="ColorRect" parent="ScreenRenderTargetNode/BloomPrepass"]
+material = SubResource("ShaderMaterial_i2a56")
+custom_minimum_size = Vector2(1152, 648)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CrtFilterPass" type="SubViewport" parent="ScreenRenderTargetNode"]
+size = Vector2i(1152, 648)
+
+[node name="ColorRect" type="ColorRect" parent="ScreenRenderTargetNode/CrtFilterPass"]
+material = SubResource("ShaderMaterial_16sgu")
+custom_minimum_size = Vector2(1152, 648)
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("4_ygw0n")
+
+[node name="Scene3DPass" type="SubViewport" parent="."]
+size = Vector2i(1152, 648)
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Scene3DPass"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04414, -0.256641)
+script = ExtResource("1_rqwj1")
+
+[node name="pivot" type="Node3D" parent="Scene3DPass/CharacterBody3D"]
+transform = Transform3D(-1, 0, 6.97692e-05, 0, 1, 0, -6.97692e-05, 0, -1, -0.0187323, 0, -6.55651e-07)
+
+[node name="carModel" type="MeshInstance3D" parent="Scene3DPass/CharacterBody3D"]
+transform = Transform3D(-1, 0, 6.97692e-05, 0, 1, 0, -6.97692e-05, 0, -1, -0.0187323, 0.634694, -6.55651e-07)
+mesh = ExtResource("1_mwqm2")
+skeleton = NodePath("../pivot")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Scene3DPass/CharacterBody3D"]
+transform = Transform3D(-1, 0, 6.97692e-05, 0, 1, 0, -6.97692e-05, 0, -1, 0.00936613, 0.696306, 1.3113e-06)
+shape = SubResource("BoxShape3D_e6ni3")
+
+[node name="Camera3D" type="Camera3D" parent="Scene3DPass/CharacterBody3D"]
+transform = Transform3D(1, -4.67507e-16, 3.2796e-16, 3.2796e-16, 0.940288, 0.34038, -4.67507e-16, -0.34038, 0.940288, 2.08165e-12, 2.778, 5.658)
+script = ExtResource("8_447mq")
+
+[node name="ground" type="StaticBody3D" parent="Scene3DPass"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.53892, 0.0595765, -0.026866)
+visible = false
+collision_layer = 7
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Scene3DPass/ground"]
+transform = Transform3D(13.7494, 0, 0, 0, 100, 0, 0, 0, 2010.19, 0, 0, 0)
+mesh = SubResource("PlaneMesh_lafke")
+surface_material_override/0 = SubResource("StandardMaterial3D_aobow")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Scene3DPass/ground"]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, -0.0182972, -17.0823, -0.00645638)
+shape = SubResource("BoxShape3D_ala1l")
+
+[node name="sun" type="DirectionalLight3D" parent="Scene3DPass"]
+transform = Transform3D(0.867062, 0.352059, -0.352502, -5.94121e-17, 0.707551, 0.706662, 0.4982, -0.61272, 0.613491, -6.18062, 32.8834, 46.5372)
+
+[node name="TrackMesh" type="MeshInstance3D" parent="Scene3DPass"]
+script = ExtResource("8_a4ceo")
+metadata/quads_per_row = 100
+
+[node name="TrackMap" type="TextureRect" parent="Scene3DPass/TrackMesh"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("9_7g5dm")
+
+[node name="obstacle" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, 0.000890167, 0, 1, 0, -0.000890167, 0, -1, -5.81461, 0.746459, 0)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="obstacle"]
+collision_layer = 2
+mass = 0.88
+physics_material_override = SubResource("PhysicsMaterial_xrkw2")
+gravity_scale = 0.997
+angular_velocity = Vector3(3.63316e-14, 3.63316e-14, 0.0207694)
+script = ExtResource("8_1avu8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="obstacle/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0609493, 0.113232, 0.00408012)
+shape = SubResource("BoxShape3D_ajyig")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="obstacle/RigidBody3D"]
+mesh = ExtResource("1_mwqm2")
+skeleton = NodePath("../..")

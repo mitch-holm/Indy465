@@ -1,0 +1,22 @@
+Tracks are generated from textures via TrackMesh.gd using a marching squares strategy.
+
+There are 3 tunable parameters of the TrackMesh that you should care about embedded in the Metadata section
+Quads per Row - Effectively the resolution of the mesh to be generated. This has the most impact on generation time. Should be divide evenly into Forced Map Resolution for best results
+Forced Map Resolution - Width and height that the track image is resized to internally
+Generated Vertex Scaling - Scales the output geometry
+
+Make FMR and GVS non-equal values at your own peril, these should be fine to be different but I haven't tested it and the defaults are fine for most cases. QPR may require some tuning per track depending on the complexity of the shape.
+
+
+Red channel:
+The red channel represents track geometry and is what the marching squares algorithm looks at during generation.
+Geometry in the red channel should fade out to less than 50% intensity at the track edges to help the algorithm generate smooth edges.
+
+Green channel:
+The green channel is used for player starting position and orientation.
+The code assumes that there will only be one green blob in the image, and that the center of this blob will represent the position.
+The blob is assumed to have a green value of 50%-100% where a value of 50% represents 0 radians of rotation, and 100% represents 2pi radians.
+
+Tips 'n tricks:
+If you have a solid volume in an image that you want to use as a track, you can paint it red, paint the rest of the image black, and apply a bokeh blur to get something that the algorithm will ingest.
+Life is easiest if you keep each color channel in a separate layer in your image editing software of choice.
